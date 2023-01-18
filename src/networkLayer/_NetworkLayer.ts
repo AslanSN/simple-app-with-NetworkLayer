@@ -1,13 +1,9 @@
-export {}
-type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
-type Cors = 'cors' | 'no-cors'
-type Body = BodyInit | null | undefined
-type Headers = HeadersInit | undefined
+import type { Cors, Method, Headers, Body } from './types'
 
 interface NetworkClient {
 	baseURL: String
-	cors: 'cors' | 'no-cors'
-	send(request: NetworkClient): Promise<any>
+	cors: Cors
+	send(request: NetworkRequestObject): Promise<any>
 }
 
 class NetworkClientObject implements NetworkClient {
@@ -18,7 +14,7 @@ class NetworkClientObject implements NetworkClient {
 		this.cors = cors ? 'cors' : 'no-cors'
 	}
 
-	async send(request: NetworkClient): Promise<any> {
+	async send(request: NetworkRequestObject): Promise<any> {
 		return await request.performRequest(this.baseURL, this.cors)
 	}
 }
@@ -44,18 +40,25 @@ class DecodableObject implements Decodable {
 	}
 
 	async decoder(): Promise<any> {
-		if (this.response.headers.get('Content-Type').includes(/json$/)) {
-			return await Decoder.json(this.response)
-		} else if (this.response.headers.get('Content-Type').includes(/xml$/)) {
-			return await Decoder.xml(this.response)
+		const contentType = this.response.headers.get('Content-Type')
+		if (contentType) {
+			if (contentType.includes('/json')) {
+				return await Decoder.json(this.response)
+			} else if (contentType.endsWith('xml')) {
+				return await Decoder.xml(this.response)
+			}
 		}
+
+		return Promise.reject(
+			new Error('Promise Rejected: Content-Type not JSON nor XML')
+		)
 	}
 }
 
-interface NetworkBehaviour {
-	success(response: Response): Promise<any>
-	failure(error: any): Error
-}
+// interface NetworkBehaviour {
+// 	success(response: Response): Promise<any>
+// 	failure(error: any): Error
+// }
 
 class NetworkBehaviour {
 	static async success(response: Response): Promise<any> {
@@ -111,4 +114,4 @@ const getRequest = new NetworkRequestObject('/random_joke')
 
 const joke = client.send(getRequest)
 
-joke.then((response) => response.json()).then((data) => console.log(data))
+joke.then((response) => console.log(response))

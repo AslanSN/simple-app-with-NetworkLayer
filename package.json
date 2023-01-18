@@ -1,10 +1,10 @@
 {
   "name": "my-qwik-basic-starter",
-  "description": "App with Routing built-in (recommended)",
+  "description": "Simple API consuming app with a Network Layer",
   "engines": {
     "node": ">=15.0.0"
   },
-  "private": true,
+  "private": false,
   "scripts": {
     "build": "qwik build",
     "build.client": "vite build",

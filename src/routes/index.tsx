@@ -6,7 +6,7 @@ export default component$(() => {
   return (
     <div>
       <h1>
-        Welcome to Qwik <span class="lightning">⚡️</span>
+        Welcome to my Qwik app with Network Layer
       </h1>
 
       <ul>
@@ -145,7 +145,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Welcome to Qwik',
+  title: 'Network Layer consumpting',
   meta: [
     {
       name: 'description',
